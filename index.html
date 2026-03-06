@@ -17,7 +17,8 @@
             text-align: center;
             /* Update to use a vertical peach-to-pink gradient */
             background-image: linear-gradient(to bottom, #e68a4d, #fddbd2);
-            overflow: hidden;
+            overflow-x: hidden;
+            overscroll-behavior-y: auto;
             /* Prevents scrollbars when button moves */
         }
 
@@ -141,8 +142,6 @@
         #success-message {
             color: #4A4A4A;
             font-size: 32px;
-            text-align: center;
-            padding: 0 20px;
         }
     </style>
 </head>
@@ -161,8 +160,8 @@
 
         <div class="button-area">
             <button id="yes-button" class="nav-button" onclick="celebrate()">YES ✨</button>
-            
-            <button id="no-button" class="nav-button" onmouseover="runAwayNo(event)" ontouchstart="runAwayNo(event)">NO 😊</button>
+
+            <button id="no-button" class="nav-button" onmouseover="runAwayNo()">NO 😊</button>
         </div>
     </div>
 
@@ -173,25 +172,18 @@
     </div>
 
     <script>
-        // Function to make the NO button move away when hovered or touched
-        function runAwayNo(event) {
-            // This prevents the screen tap from actually registering as a click if they tap really fast
-            if (event) {
-                event.preventDefault(); 
-            }
-
+        // Function to make the NO button move away when hovered
+        function runAwayNo() {
             var noButton = document.getElementById("no-button");
 
             // Generate random X and Y positions within a sensible range of the screen
-            // Added slight padding so it doesn't go completely off-screen
-            var padding = 20; 
-            var randomX = Math.floor(Math.random() * (window.innerWidth - noButton.offsetWidth - padding));
-            var randomY = Math.floor(Math.random() * (window.innerHeight - noButton.offsetHeight - padding));
+            var randomX = Math.floor(Math.random() * (window.innerWidth - noButton.offsetWidth));
+            var randomY = Math.floor(Math.random() * (window.innerHeight - noButton.offsetHeight));
 
             // Move the button relative to the top-left of the screen
             noButton.style.position = "fixed";
-            noButton.style.top = Math.max(padding, randomY) + "px";
-            noButton.style.left = Math.max(padding, randomX) + "px";
+            noButton.style.top = randomY + "px";
+            noButton.style.left = randomX + "px";
             noButton.style.transform = "rotate(0deg)"; // Reset rotation when moving
             noButton.style.opacity = 1; // Full opacity when moving
         }
@@ -202,6 +194,21 @@
             document.querySelector(".content-container").style.display = "none";
             // Show the success area
             document.getElementById("success-state").style.display = "flex";
+
+            setTimeout(function () {
+                // Show the main screen again
+                document.querySelector(".content-container").style.display = "block";
+                // Hide the success area
+                document.getElementById("success-state").style.display = "none";
+
+                // Reset the 'NO' button back to its original position just in case it was chased!
+                var noButton = document.getElementById("no-button");
+                noButton.style.position = "absolute";
+                noButton.style.top = "-160px";
+                noButton.style.left = "-150px";
+                noButton.style.transform = "rotate(-5deg)";
+                noButton.style.opacity = "0.9";
+            }, 5000);
         }
     </script>
 </body>
